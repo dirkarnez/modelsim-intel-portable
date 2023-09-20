@@ -27,18 +27,18 @@ jobs:
         run: dir
         
       - shell: cmd
-        run: xcopy /H /Y /C "ModelSim.exe.Portable.cmd" "modelsim"
+        run: xcopy /H /Y /C "ModelSim.exe.Portable.cmd" "modelsim_ase"
           
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          directory: "modelsim"
+          directory: "modelsim_ase"
           filename: "${{ env.targetZip }}"
           
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "modelsim/${{ env.targetZip }}"
+          artifacts: "modelsim_ase/${{ env.targetZip }}"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
