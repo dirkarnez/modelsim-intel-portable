@@ -23,7 +23,9 @@ jobs:
       - shell: cmd
         run: .\unattended-installation.cmd
         
-
+      - shell: cmd
+        run: dir
+        
       - shell: cmd
         run: xcopy /H /Y /C "ModelSim.exe.Portable.cmd" "modelsim"
           
