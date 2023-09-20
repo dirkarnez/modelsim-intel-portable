@@ -1,1 +1,42 @@
-https://downloads.intel.com/akdlm/software/acdsinst/18.1std/625/ib_installers/ModelSimSetup-18.1.0.625-windows.exe
+name: portable-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-latest
+    env:
+      targetZip: modelsim-intel-portable-${{ github.ref_name }}.zip
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: installer
+        shell: cmd
+        run: |
+          curl https://downloads.intel.com/akdlm/software/acdsinst/18.1std/625/ib_installers/ModelSimSetup-18.1.0.625-windows.exe -L -J --output installer.exe
+
+      - shell: cmd
+        run: .\unattended-installation.cmd
+        
+
+      - shell: cmd
+        run: xcopy /H /Y /C "ModelSim.exe.Portable.cmd" "modelsim"
+          
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "modelsim"
+          filename: "${{ env.targetZip }}"
+          
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "modelsim/${{ env.targetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
